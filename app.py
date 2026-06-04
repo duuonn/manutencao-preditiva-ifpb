@@ -2,9 +2,9 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-# 1. Configuração da página (Tema Escuro e Amplo)
+# 1. Configuração da página
 st.set_page_config(
-    page_title="Predição de Falhas Industrial", 
+    page_title="Manutenção Preditiva Industrial", 
     page_icon="⚙️", 
     layout="centered"
 )
@@ -20,29 +20,45 @@ except Exception as e:
     st.error(f"Erro ao carregar o modelo: {e}")
     st.stop()
 
-# 2. Barra Lateral (Sidebar) - Organização de créditos e informações
+# 2. Barra Lateral (Sidebar) - Organizada e com link do GitHub
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/3095/3095221.png", width=80) # Ícone de fábrica
-    st.title("Sobre o Projeto")
+    st.title("🏭 Inteligência Industrial")
     st.markdown("""
-    **Instituição:** Instituto Federal da Paraíba (IFPB)  
-    
-    **Desenvolvido por:** Eduardo R. Teixeira  
-    
-    **Orientação:** Prof. José Thiago Holanda  
+    Este sistema utiliza **Machine Learning** para prever falhas em equipamentos industriais, auxiliando equipes de engenharia na tomada de decisão e redução de custos com paradas não planejadas.
     """)
     st.divider()
-    st.info("Este sistema utiliza Inteligência Artificial (Random Forest) para prever quebras em maquinários antes que elas aconteçam.")
+    
+    # Botão chamativo para o seu GitHub (Substitua o LINK abaixo pelo seu)
+    st.markdown("**Código Fonte & Metodologia:**")
+    st.link_button("📂 Ver Código no GitHub", "https://github.com/duuonn/manutencao-preditiva-ifpb", use_container_width=True)
+    
+    st.divider()
+    st.markdown("""
+    **Instituição:** Instituto Federal da Paraíba (IFPB)  
+    **Desenvolvedor:** Eduardo R. Teixeira  
+    """)
 
-# 3. Área Principal
-st.title("⚙️ Monitoramento & Manutenção Preditiva")
-st.caption("Painel de Controle e Análise de Risco de Ativos Industriais")
+# 3. Área Principal - Banner e Título Profissional
+st.subheader("🔧 PLATAFORMA DE MANUTENÇÃO PREDITIVA AI")
+st.title("Monitoramento Operacional de Ativos")
+st.caption("Insira os dados de telemetria dos sensores abaixo para análise de integridade em tempo real.")
+
+# 4. CARD COM AS MÉTRICAS DO MODELO (O que o recrutador quer ver!)
+st.write("")
+st.markdown("##### 📊 Performance do Modelo Homologado (Random Forest)")
+with st.container(border=True):
+    m1, m2, m3 = st.columns(3)
+    with m1:
+        st.metric(label="Recall (Captação de Falhas)", value="94.8%")
+    with m2:
+        st.metric(label="F1-Score Geral", value="79.0%")
+    with m3:
+        st.metric(label="Threshold Otimizado", value="0.40")
+
 st.divider()
 
-# Formulário organizado em caixas (Fieldset)
-st.subheader("🔌 Telemetria dos Sensores")
-
-# Criando os Sliders dentro de uma estrutura organizada
+# 5. Formulário de Sensores
+st.markdown("##### 🔌 Telemetria Atual dos Sensores")
 with st.container(border=True):
     col1, col2 = st.columns(2)
     
@@ -56,15 +72,15 @@ with st.container(border=True):
         corrente = st.slider("Corrente Elétrica (A)", min_value=0.0, max_value=50.0, value=18.0, step=0.1)
         horas_uso = st.number_input("Horas de Uso Acumuladas", min_value=0, max_value=20000, value=150, step=50)
 
-st.write("") # Espaçamento
+st.write("") 
 
-# Container para exibir os resultados de forma limpa
+# Container de Resultados
 resultado_placeholder = st.container()
 
-# Botão de ação destacado
+# Botão de Execução
 if st.button("🚀 Executar Análise de Risco", use_container_width=True, type="primary"):
     
-    # Criar DataFrame com as colunas do modelo
+    # DataFrame estruturado para o pipeline
     dados_entrada = pd.DataFrame([{
         'vibracao_rms': vibracao,
         'temperatura_c': temperatura,
@@ -78,7 +94,7 @@ if st.button("🚀 Executar Análise de Risco", use_container_width=True, type="
     }])
     
     try:
-        # Calcular probabilidade
+        # Predição
         probabilidade = modelo.predict_proba(dados_entrada)[0][1]
         threshold_projeto = 0.40
         porcentagem_risco = probabilidade * 100
@@ -87,7 +103,6 @@ if st.button("🚀 Executar Análise de Risco", use_container_width=True, type="
             st.write("")
             st.subheader("🎯 Diagnóstico do Sistema")
             
-            # Layout de resposta com métrica grande
             c1, c2 = st.columns([1, 2])
             
             with c1:
